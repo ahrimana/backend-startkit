@@ -4,6 +4,7 @@ from ..models.auth import User
 from ..schemas.auth import UserSchema
 from ..schemas.paging import PageInSchema, PageOutSchema, paginate
 from .methodviews import ProtectedMethodView
+from flask_security.utils import hash_password 
 
 blueprint = Blueprint('user', 'user')
 
@@ -21,6 +22,7 @@ class UserListAPI(ProtectedMethodView):
     def post(self, args):
         """Create user"""
         user = User(**args)
+        user.password = hash_password(args['password'])
         user.save()
         return user
 
@@ -45,6 +47,8 @@ class UserAPI(ProtectedMethodView):
             abort(404, 'User not found')
         for field in args:
             setattr(user, field, args[field])
+        if 'password' in args:
+            user.password = hash_password(args['password'])
         user.save()
         return user
 

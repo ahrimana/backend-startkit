@@ -21,6 +21,7 @@ def register_endpoints(app, api_prefix, blueprints):
 def create_api(app):
     from .auth import blueprint as auth
     from .user import blueprint as user
+    from .blog import blueprint as blog
 
     app.api = MyApi(app)
     register_endpoints(
@@ -28,6 +29,7 @@ def create_api(app):
         '/api/v0',
         [
             auth,
+            blog,
             user,
         ],
     )
