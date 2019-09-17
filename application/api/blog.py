@@ -1,9 +1,11 @@
 from flask_rest_api import Blueprint, abort
+from flask_jwt_extended import get_jwt_identity
 
 from ..models.blog import Blog
 from ..schemas.blog import BlogSchema
 from ..schemas.paging import PageInSchema, PageOutSchema, paginate
 from .methodviews import ProtectedMethodView
+from ..models.auth import User
 
 blueprint = Blueprint('blog', 'blog')
 
@@ -20,7 +22,13 @@ class BlogListAPI(ProtectedMethodView):
     @blueprint.response(BlogSchema)
     def post(self, args):
         """Create blog"""
+        email = get_jwt_identity()
+        try:
+          user = User.get(email=email)
+        except User.DoesNotExist:
+          abort(404, message='No such user')
         blog = Blog(**args)
+        blog.author = user
         blog.save()
         return blog
 

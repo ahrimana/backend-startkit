@@ -36,10 +36,16 @@ SQL = pw.SQL
 def migrate(migrator, database, fake=False, **kwargs):
     """Write your migrations here."""
 
-    migrator.change_fields('users', active=pw.BooleanField(constraints=[SQL("DEFAULT True")]),
-        admin=pw.BooleanField(constraints=[SQL("DEFAULT False")]))
+    migrator.change_fields('users', admin=pw.BooleanField(constraints=[SQL("DEFAULT False")]),
+        active=pw.BooleanField(constraints=[SQL("DEFAULT True")]))
+
+    migrator.add_fields(
+        'blog',
+
+        author=pw.ForeignKeyField(backref='blogs', column_name='author_id', field='id', model=migrator.orm['users'], null=True))
 
 
 def rollback(migrator, database, fake=False, **kwargs):
     """Write your rollback migrations here."""
-False
+
+    migrator.remove_fields('blog', 'author')
