@@ -41,7 +41,7 @@ class BlogAPI(ProtectedMethodView):
         try:
             blog = Blog.get(id=blog_id)
         except Blog.DoesNotExist:
-            abort(404, 'Blog not found')
+            abort(404, message='Blog not found')
         return blog
 
     @blueprint.arguments(BlogSchema(partial=True))
@@ -50,7 +50,7 @@ class BlogAPI(ProtectedMethodView):
         try:
             blog = Blog.get(id=blog_id)
         except Blog.DoesNotExist:
-            abort(404, 'Blog not found')
+            abort(404, message='Blog not found')
         for field in args:
             setattr(blog, field, args[field])
         blog.save()
